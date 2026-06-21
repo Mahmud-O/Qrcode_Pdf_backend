@@ -6,11 +6,11 @@ const { generateQRCode, embedQRInPDF } = require('../services/pdf.service');
 
 const prisma = new PrismaClient();
 
-// Fixed QR placement settings (X=48, Y=620, Size=50)
+// Static QR placement settings
 const FIXED_SETTINGS = {
   position: 'custom',
-  customX: 48,
-  customY: 620,
+  customX: 490,
+  customY: 145,
   qrSize: 50,
   pageSelection: 'all',
 };
@@ -55,7 +55,11 @@ exports.uploadDocuments = async (req, res) => {
 
       // Embed QR in PDF using fixed placement settings
       const processedPath = await embedQRInPDF(file.path, qrImagePath, {
-        ...FIXED_SETTINGS,
+        position: FIXED_SETTINGS.position,
+        customX: FIXED_SETTINGS.customX,
+        customY: FIXED_SETTINGS.customY,
+        qrSize: FIXED_SETTINGS.qrSize,
+        pageSelection: FIXED_SETTINGS.pageSelection,
         outputFilename: `processed_${token}.pdf`,
       });
 

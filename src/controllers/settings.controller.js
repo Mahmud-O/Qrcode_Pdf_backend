@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
 const DEFAULTS = {
   qrPosition: 'custom',
   qrSize: 50,
-  customX: 48,
-  customY: 620,
+  customX: 490,
+  customY: 145,
   applyTo: 'all',
 };
 
@@ -25,16 +25,25 @@ exports.getSettings = async (req, res) => {
 
 exports.updateSettings = async (req, res) => {
   try {
+    const { qrPosition, qrSize, customX, customY, applyTo } = req.body;
     let settings = await prisma.qRSettings.findFirst();
+
+    const data = {
+      qrPosition: qrPosition || DEFAULTS.qrPosition,
+      qrSize: qrSize !== undefined ? parseInt(qrSize) : DEFAULTS.qrSize,
+      customX: customX !== undefined ? parseInt(customX) : DEFAULTS.customX,
+      customY: customY !== undefined ? parseInt(customY) : DEFAULTS.customY,
+      applyTo: applyTo || DEFAULTS.applyTo,
+    };
 
     if (settings) {
       settings = await prisma.qRSettings.update({
         where: { id: settings.id },
-        data: DEFAULTS,
+        data,
       });
     } else {
       settings = await prisma.qRSettings.create({
-        data: DEFAULTS,
+        data,
       });
     }
 
@@ -44,3 +53,4 @@ exports.updateSettings = async (req, res) => {
     res.status(500).json({ error: 'Failed to update settings' });
   }
 };
+
